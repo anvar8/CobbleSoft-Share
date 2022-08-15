@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    p, li {
+        font-size: 1.1em;
+    }
+</style>
+
+<div class="jumbotron py-4">
+    <h1>Application Summary</h1>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h2>API Architecture</h2>
+        <p>Net Core 3.0</p>
+        <p>Client server approach is used. Calls to API are made with HttpClient in MVC Application. DB access is made
+            with EF ORM. SqlLite db is used.</p>
+        <section><h4>Architectural Patterns:</h4>
+            <ul>
+                <li>Clean(Ontion) Architecture => <strong>Infrastructure</strong> contains DB access logic and servces (file service in
+                    this app). <strong>Core</strong> contains interfaces, data entities</li>
+                <li>Generic repository pattern is implemented</li>
+                <li>Specification pattern enables proper use of Generic Repository. This way we can apply filtering, sorting, pagination, and include statements (with nested entities) in the specification object and pass the object to generic repo methods </li>
+                <li>UnitOfWork pattern used to instantiate db only once for all repos and provide facade to all repos</li>
+            </ul>
+
+        </section>
+        <section>
+            <h4>Design patterns attempted (file upload):</h4>
+            <ul>
+                <li>When saving file to API, <strong>Facade</strong> provides abstraction from logic</li>
+                <li><strong>Template method</strong> pattern is used to enable multiple file extensions other than .csv </li>
+                <li><b>Strategy</b> pattern is used to pass different configurations to file formatters</li>
+            </ul>
+        </section>
+        <section>
+            <div class="h4">Nuget packages (incomplete list):</div>
+            <ul>
+                <li>AutoMapper to map DTOs to Entities</li>
+                <li>CsvHelper</li>
+                <li>Json.Newtonsoft</li>
+            </ul>
+        </section>
+
+
+    </div>
+    <div class="col-md-6">
+        <h2>To-do</h2>
+     
+        <ul>
+           
+            <li>(Client) Make wrapper around HttpClient logic. Abstract http logic from the controller</li>
+            <li>Files represent batches. Records could be displayed for a specific batch vs. being shown all in one table.</li>
+            <li>Add records to a batch (file represenation in db)</li>
+            <li>(API) When uploading batch, save 100 records or less at a time. If somewhere along the way exception/error occurs, roll back transaction. With files containing massive number of records, we want to "feed" small portions to db at a time</li>
+            <li>Unit Tests (learn and implement)</li>
+        </ul>
+    </div>
+</div>

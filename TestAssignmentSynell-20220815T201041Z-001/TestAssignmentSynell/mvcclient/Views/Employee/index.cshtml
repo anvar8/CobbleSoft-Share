@@ -1,0 +1,112 @@
+@model mvcclient.Models.EmployeeViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="display: flex; justify-content: space-between">
+    <div>
+        @using (Html.BeginForm())
+        {
+            <p>
+                Search: @Html.TextBox("SearchString")
+                <input type="submit" value="Search" />
+            </p>
+        }
+    </div>
+    <form method="post" enctype="multipart/form-data" asp-controller="Employee" asp-action="UploadBatch">
+        <div style="display: flex; justify-content: flex-start">
+            <div class="form-group">
+                <div class="col-md-10">
+
+                    <input type="file" name="file" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" value="Upload" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+@if (Model.Data.Count > 0)
+{
+
+    <p>Total Records: @Model.Count records</p>
+    <table class="table table-striped">
+        <tr>
+            @foreach (var property in Model.Data[0].GetType().GetProperties())
+            {
+                if (property.Name == "Id") continue;
+
+                @* var name = @Html.DisplayNameFor(x => x.Data[0].GetType().GetProperty(property.Name)); *@
+                <th>
+                    @* <a asp-action="Index" asp-route-sortOrder="@ViewData["@property.Name + SortOrder"]"
+                        asp-route-sortProperty="@property.Name">@property.Name</a> *@
+
+                    <a style="color: black" asp-action="Index" asp-route-sortOrder="@ViewData["SortDirection"]"
+                        asp-route-prevProp="@ViewData["PreviousProperty"]"
+                        asp-route-sortProperty="@property.Name">@property.Name</a>
+
+                </th>
+            }
+            <td><strong>Actions</strong></td>
+        </tr>
+        @foreach (var item in Model.Data)
+        {
+
+            <tr>
+                @foreach (var property in typeof(Employee).GetProperties())
+                {
+                    if (property.Name == "Id") continue;
+
+                    <td>@(property.GetValue(item, null))</td>
+                }
+                <td>
+                    <div style="display: flex">
+                        @using (Html.BeginForm("Edit", "Employee", new { id = item.Id }, FormMethod.Get))
+                        {
+                            <div class="form-actions">
+                                <button type="submit" value="" class="btn btn-default btn-xs">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                            </div>
+                        }
+                        @using (Html.BeginForm("Delete", "Employee", new { id = item.Id }, FormMethod.Post))
+                        {
+
+                            <button type="submit" value="" class="btn btn-xs btn-default">
+                                <i class="fa fa-trash red" type="submit"></i>
+                            </button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+
+
+
+    </table>
+}
+
+@if (Model.Count > 0)
+{
+    <ul class="pagination">
+
+        @for (int i = 1; i <= Convert.ToInt32(Math.Ceiling(Model.Count / (double)Model.PageSize)); i++)
+        {
+            <li class="@(i == Model.PageIndex ? "page-item active" : "page-item")">
+                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+            </li>
+        }
+
+
+
+    </ul>
+}
+else
+{
+    <div class="text-center">No data</div>
+}
